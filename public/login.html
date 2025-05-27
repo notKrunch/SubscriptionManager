@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Login</h2>
+
+    <form onsubmit="login(event)">
+      <label for="email">Email</label>
+      <input type="email" id="email" required autocomplete="email" aria-label="Email address">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required autocomplete="current-password" aria-label="Password">
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p style="margin-top: 1rem; text-align: center;">
+      Don't have an account? <a href="signup.html">Sign up</a>
+    </p>
+  </div>
+
+  <!-- Toast & spinner containers -->
+  <div id="toast"></div>
+  <div id="spinner" class="hidden">Logging in...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiEf1IWwXyqvVKTPHnCui_xEDOgnjr1uU",
+      authDomain: "subscription-manager-b9db1.firebaseapp.com",
+      projectId: "subscription-manager-b9db1",
+      storageBucket: "subscription-manager-b9db1.firebasestorage.app",
+      messagingSenderId: "289439559188",
+      appId: "1:289439559188:web:6452bb481df8e696d24101",
+      measurementId: "G-0F9EZFM2XV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const spinner = document.getElementById("spinner");
+
+      spinner.classList.remove("hidden");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showToast("Login successful!", "success");
+        setTimeout(() => window.location.href = "dashboard.html", 1000);
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        spinner.classList.add("hidden");
+      }
+    };
+  </script>
+
+  <script>
+    function showToast(message, type) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "show " + type;
+      setTimeout(() => toast.className = "", 3000);
+    }
+  </script>
+</body>
+</html>
